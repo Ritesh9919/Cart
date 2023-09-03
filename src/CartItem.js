@@ -8,7 +8,7 @@ const CartItem = (props) => {
         return (
             <div className="cart-item">
                 <div className="left-block">
-                    <img style={styles.image} />
+                    <img style={styles.image} src={product.img}/>
                 </div>
                 <div className="right-block">
                     <div style={{ fontSize: '25px' }}>{title}</div>
@@ -20,7 +20,9 @@ const CartItem = (props) => {
                         <img alt="delete" src="https://cdn-icons-png.flaticon.com/128/3405/3405244.png" className="action-icons" onClick={()=> onDeleteProduct(product.id)}/>
                     </div>
                 </div>
+                
             </div>
+            
         )
     
 }
