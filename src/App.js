@@ -1,6 +1,8 @@
 import Cart from './Cart';
 import Navbar from './Navbar';
 import React from 'react';
+import {db} from './FirebaseInit';
+import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
 
 
 
@@ -8,12 +10,8 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      products: [
-        { title: 'Phone', price: 99, quantity: 5, img: 'https://images.pexels.com/photos/825947/pexels-photo-825947.jpeg?auto=compress&cs=tinysrgb&w=600', id: 1 },
-        { title: 'Car', price: 99, quantity: 5, img: 'https://images.pexels.com/photos/825947/pexels-photo-825947.jpeg?auto=compress&cs=tinysrgb&w=600', id: 2 },
-        { title: 'Bike', price: 99, quantity: 5, img: 'https://images.pexels.com/photos/825947/pexels-photo-825947.jpeg?auto=compress&cs=tinysrgb&w=600', id: 3 },
-        { title: 'Cycle', price: 99, quantity: 5, img: 'https://images.pexels.com/photos/825947/pexels-photo-825947.jpeg?auto=compress&cs=tinysrgb&w=600', id: 4 }
-      ]
+      products: [],
+      loading:true
     }
   }
 
@@ -30,7 +28,7 @@ class App extends React.Component {
     const { products } = this.state;
 
     const index = products.indexOf(product);
-    if (products[index].quantity == 0) {
+    if (products[index].quantity === 0) {
       return;
     }
     products[index].quantity -= 1;
@@ -42,7 +40,7 @@ class App extends React.Component {
   handleDeleteProduct = (id) => {
     const { products } = this.state;
     const items = products.filter((item) => {
-      return item.id != id;
+      return item.id !== id;
     })
     this.setState({
       products: items
@@ -67,6 +65,18 @@ getTotalPrice = () => {
   return totalPrice;
 }
 
+async componentDidMount() {
+    const productsCol = collection(db, 'products');
+    const productsSnapshot = await getDocs(productsCol);
+    const productList = productsSnapshot.docs.map((doc) => {
+      return doc.data();
+    });
+
+    
+
+    this.setState({products:productList, loading:false});
+}
+
   render() {
     return (
       <div className="App">
@@ -79,6 +89,7 @@ getTotalPrice = () => {
 
 
         />
+        {this.state.loading && <h1>Loading....</h1>}
         <div style={styles.priceCon}>
           <h2 style={styles.totalPrice}>Total: {this.getTotalPrice()}</h2>
         </div>
